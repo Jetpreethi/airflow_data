@@ -1,0 +1,57 @@
+# stage 2--commands for PySpark to clean and push feature data from HDFS to a Hive table database using emr.
+
+    1) aws s3 cp s3://bucket-name/test.py ./
+
+    2)spark-submit test.py
+
+    # In hive commands
+
+    1)create database db
+
+    2)shows databases 
+
+    3)it will show the table pyhive # check pyspark-hive script in github uploaded.
+
+
+#stage3:--the below are the commands that should be used in emr cluster to download and sqoop and store in hive.
+
+    DOWNLOADING MYSQL_CONNECTOR FOR SQOOP CONNECTION:
+       wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.28.tar.gz
+
+    EXTRACTING IT:
+       tar -xzvf mysql-connector-java-8.0.28.tar.gz
+
+
+    COPY CONNECTOR JAR TO SQOOP LIB_PATH:
+        sudo cp mysql-connector-java-8.0.28/mysql-connector-java-8.0.28.jar /usr/lib/sqoop/lib/
+
+
+-----------------------------------------------------------------------------------------------
+    Read RDBMS (MYSQL) data
+         #sqoop eval --connect jdbc:mysql://endpoint:3306/PLAYERS --username your_name --password your_password --query "SELECT * FROM tablename"
+
+
+--------------------------------------------------------------------------------------------------
+    MYSQL to HDFS
+          #sqoop import --connect jdbc:endpoint:3306/PLAYERS --username yourname --password yourpassword --table yourtable --target-dir /user/hadoop/demo_data -m1
+
+
+    --> hadoop fs -ls /user/hadoop/demo_data
+
+----------------------------------------------------------------------------------------------------
+    MYSQL to HIVE (with SQL schema)
+ 
+
+          sqoop import \
+          --connect jdbc:mysql://endpoint:3306/database \
+          --username yourname\
+          --password yourpassword \
+          --table yourtable \
+          --hive-import \
+          --hive-table hive_table_name \
+          --create-hive-table \
+          --hive-overwrite \
+          -m 1
+
+
+stage 4 and 5: -- the script is in github (emr_merge.py)
